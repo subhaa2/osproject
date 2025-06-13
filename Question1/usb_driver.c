@@ -107,7 +107,7 @@ static int __init mychar_init(void) {
 }
 
 // Module exit function
-static void __exit mychar_exit(void) {
+static void __exit mychar_exit(void) { 
     cdev_del(&my_cdev);
     device_destroy(char_class, MKDEV(major_number, 0));
     class_unregister(char_class);
