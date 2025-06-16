@@ -8,6 +8,7 @@
 #define CLASS_NAME "mycharclass"
 #define BUFFER_SIZE 1024
 
+MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("A simple Linux char driver for USB flash interaction");
 
 static int major_number;
@@ -85,7 +86,7 @@ static int __init mychar_init(void)
     }
 
     // Create device class
-    char_class = class_create(THIS_MODULE, CLASS_NAME);
+    char_class = class_create(CLASS_NAME);
     if (IS_ERR(char_class))
     {
         unregister_chrdev(major_number, DEVICE_NAME);

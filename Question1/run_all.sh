@@ -8,20 +8,23 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-echo "[2] Inserting kernel module..."
-sudo insmod usb_driver.ko
+echo "[2] Removing existing module (if loaded)..."
+sudo rmmod usb_driver 2>/dev/null
 
-echo "[3] Creating device node (if needed)..."
+echo "[3] Inserting kernel module..."
+sudo insmod usb_driver.ko || echo "Module already inserted or failed"
+
+echo "[4] Creating device node (if needed)..."
 # Get major number from dmesg
 MAJOR=$(dmesg | grep "mychardev: Device created successfully" -A 5 | grep "mychardev" | tail -n1 | grep -oE "[0-9]+" | head -n1)
 if [ -z "$MAJOR" ]; then
     echo "Could not detect major number automatically. You may need to check 'dmesg' manually."
-    MAJOR=240 # fallback default, change if needed
+    MAJOR=240 
 fi
 
 sudo mknod -m 666 /dev/mychardev c $MAJOR 0 2>/dev/null
 
-echo "[4] Compiling user program..."
+echo "[5] Compiling user program..."
 gcc -o user_prog user_prog.c
 
 if [ $? -ne 0 ]; then
@@ -30,11 +33,11 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-echo "[5] Running user-space program..."
-./user_prog
+echo "[6] Running user-space program..."
+sudo ./user_prog
 
-echo "[6] Kernel messages:"
+echo "[7] Kernel messages:"
 dmesg | tail -n 20
 
-echo "[7] Removing module..."
+echo "[8] Removing module..."
 sudo rmmod usb_driver
