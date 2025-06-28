@@ -4,6 +4,7 @@
 #include <fcntl.h>      // open()
 #include <unistd.h>     // read(), write(), close()
 #include <errno.h>
+#include <time.h>
 
 #define DEVICE_PATH "/dev/mychardev"
 #define BUFFER_SIZE 1024
@@ -12,6 +13,11 @@ int main() {
     int fd;
     char read_buffer[BUFFER_SIZE];
     const char *user_message = "Hello from user space";
+    time_t current_time;
+
+    // Get the current time
+    time(&current_time);
+    printf("[User] Time before sending: %s", ctime(&current_time));
 
     // Open the device file
     fd = open(DEVICE_PATH, O_RDWR);
@@ -40,6 +46,11 @@ int main() {
     }
 
     read_buffer[bytes_read] = '\0';  // Null-terminate the string
+
+    // Get the current time after reading
+    time(&current_time);
+    printf("[User] Time after reading: %s", ctime(&current_time));
+
     printf("[+] Read from the device: \"%s\"\n", read_buffer);
 
     // Close the device file

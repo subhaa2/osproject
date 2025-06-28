@@ -3,6 +3,7 @@
 #include <linux/fs.h>
 #include <linux/uaccess.h> // for copy_to_user, copy_from_user
 #include <linux/cdev.h>
+#include <linux/timekeeping.h>
 
 #define DEVICE_NAME "mychardev"
 #define CLASS_NAME "mycharclass"
@@ -27,19 +28,25 @@ static int dev_open(struct inode *inodep, struct file *filep)
 // Called when data is sent from user-space
 static ssize_t dev_write(struct file *filep, const char __user *buffer, size_t len, loff_t *offset)
 {
+    struct timespec64 ts;
+    ktime_get_real_ts64(&ts);
+
     if (len > BUFFER_SIZE)
         len = BUFFER_SIZE;
 
     if (copy_from_user(kernel_buffer, buffer, len) != 0)
         return -EFAULT;
 
-    printk(KERN_INFO "mychardev: Received from user: %s\n", kernel_buffer);
+    printk(KERN_INFO "mychardev: [%lld.%09ld] Received from user: %s\n", (s64)ts.tv_sec, ts.tv_nsec, kernel_buffer);
     return len;
 }
 
 // Called when user-space reads from device
 static ssize_t dev_read(struct file *filep, char __user *buffer, size_t len, loff_t *offset)
 {
+    struct timespec64 ts;
+    ktime_get_real_ts64(&ts);
+
     const char *message = "Hello World from the kernel space";
     size_t msg_len = strlen(message);
 
@@ -53,7 +60,7 @@ static ssize_t dev_read(struct file *filep, char __user *buffer, size_t len, lof
         return -EFAULT;
 
     *offset += len;
-    printk(KERN_INFO "mychardev: Sent to user: %s\n", message);
+    printk(KERN_INFO "mychardev: [%lld.%09ld] Sent to user: %s\n", (s64)ts.tv_sec, ts.tv_nsec, message);
     return len;
 }
 
