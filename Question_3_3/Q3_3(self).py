@@ -1,8 +1,7 @@
-
-
 numbers = [4, 7, 1, 9, 3, 5]
+print (f"The given list is {numbers}")
 
-target = int(input("Enter a number to check: "))
+target = int(input("Enter a number for sum check: "))
 found = False
 
 for i in range(len(numbers)):

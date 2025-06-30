@@ -3,7 +3,8 @@
 
 numbers=(4 7 1 9 3 5)
 
-echo "Enter a number to check:"
+echo "Given list is [4, 7, 1, 9, 3, 5]"
+echo "Enter a number for sum check:"
 read target
 
 for (( i=0; i<${#numbers[@]}; i++ ))

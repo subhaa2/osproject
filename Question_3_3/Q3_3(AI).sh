@@ -3,7 +3,8 @@
 
 numbers=(4 7 1 9 3 5)
 
-read -p "Enter a number to check: " target
+echo "Given list is [4, 7, 1, 9, 3, 5]"
+read -p "Enter a number for sum check: " target
 
 found=0
 
