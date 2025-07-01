@@ -25,7 +25,7 @@ static int dev_open(struct inode *inodep, struct file *filep)
     return 0;
 }
 
-// Called when data is sent from user-space
+// Called when data is sent from user-space. Copies data from user space to the kernel buffer
 static ssize_t dev_write(struct file *filep, const char __user *buffer, size_t len, loff_t *offset)
 {
     struct timespec64 ts;
@@ -41,7 +41,7 @@ static ssize_t dev_write(struct file *filep, const char __user *buffer, size_t l
     return len;
 }
 
-// Called when user-space reads from device
+// Called when user-space reads from device. Copies data from kernel space to user space, handling offsets and lengths
 static ssize_t dev_read(struct file *filep, char __user *buffer, size_t len, loff_t *offset)
 {
     struct timespec64 ts;
